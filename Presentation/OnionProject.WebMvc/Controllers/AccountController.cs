@@ -30,6 +30,7 @@ namespace OnionProject.WebMvc.Controllers
             var authResult = await _authApiService.Authenticate(model.Username, model.Password);
             if (authResult)
                 return RedirectToAction("Index", "Home");
+            TempData["ErrorMsg"] = "Kullanıcı adı veya şifre yanlış girildi";
             return View(model);
         }
         public IActionResult Logout()

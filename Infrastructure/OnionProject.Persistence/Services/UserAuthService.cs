@@ -22,7 +22,7 @@ namespace OnionProject.Persistence.Services
         private IUnitOfWorkRepo _unitOfWork;
         private readonly AppSettings _appSettings;
 
-        public UserAuthService(AppSettings appSettings,IUnitOfWorkRepo unitOfWork)
+        public UserAuthService(AppSettings appSettings, IUnitOfWorkRepo unitOfWork)
         {
             _unitOfWork = unitOfWork;
             _appSettings = appSettings;
@@ -44,7 +44,7 @@ namespace OnionProject.Persistence.Services
                 }
             }
 
-            var user = await _unitOfWork.UserReadRepository.GetAsync(s => s.UserName == userAuthRequestDto.Username);
+            var user = await _unitOfWork.UserReadRepository.GetAsync(s => s.UserName == userAuthRequestDto.Username && s.Password == userAuthRequestDto.Password);
             if (user == null)
                 //throw new NotFoundUserException();
                 return null;
@@ -62,8 +62,8 @@ namespace OnionProject.Persistence.Services
             var tokenStr = tokenHandler.WriteToken(token);
             LoginUserQueryResponse userAuthResponseDto = new()
             {
-                Username=user.UserName,
-                Token= tokenStr
+                Username = user.UserName,
+                Token = tokenStr
             };
             return userAuthResponseDto;
         }

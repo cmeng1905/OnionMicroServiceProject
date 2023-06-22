@@ -39,6 +39,7 @@ builder.Services.AddAuthentication(x =>
         ValidateAudience = false,
         ValidateIssuer = false,
         ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
     };
 });
 builder.Services.AddSingleton(appSettings);

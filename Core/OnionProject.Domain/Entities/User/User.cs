@@ -13,7 +13,7 @@ namespace OnionProject.Domain.Entities.User
     {
         public User()
         {
-            AspNetUserRoles = new HashSet<UserRole>();
+            UserRoles = new HashSet<UserRole>();
         }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -42,7 +42,9 @@ namespace OnionProject.Domain.Entities.User
         public string? Phone { get; set; }
 
         public string? RefreshToken { get; set; }
-        public virtual ICollection<UserRole> AspNetUserRoles { get; set; }
+
+        public DateTime? RefreshTokenExpireDate { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; }
 
     }
 

@@ -1,0 +1,52 @@
+﻿@model OnionProject.WebMvc.Models.Product.ProductViewModel
+<div class="text-center">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="th-sm">
+                    Id
+                </th>
+                <th class="th-sm">
+                    UrunId
+                </th>
+                <th class="th-sm">
+                    Fiyat
+                </th>
+                <th class="th-sm">
+                    Olcu
+                </th>
+                <th class="th-sm">
+                    Kdv
+                </th>
+                <th class="th-sm">
+                    Tanım
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var urun in Model.Products.Take(10))
+            {
+                <tr>
+                    <td>
+                        @urun.Id
+                    </td>
+                    <td>
+                        @urun.UrunId
+                    </td>
+                    <td>
+                        @urun.Fiyat
+                    </td>
+                    <td>
+                        @urun.Olcu
+                    </td>
+                    <td>
+                        @urun.Kdv
+                    </td>
+                    <td>
+                        @urun.Tanim
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -16,7 +16,7 @@ namespace OnionProject.WebMvc.Services.Concrete
 
         public async Task<List<ProductDto>> GetProducts()
         {
-            var productResult = await _client.GetFromJsonAsync<Response<ProductQueryResponse>>("Products");
+            var productResult = await _client.GetFromJsonAsync<Response<ProductQueryResponse>>("GetProducts");
             return productResult.Data.Products;
         }
     }

@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnionProject.Application.Features.Queries.LoginUser
+namespace OnionProject.Application.Features.Commands.LoginUser
 {
-    public class LoginUserQueryRequest: IRequest<Response<LoginUserQueryResponse>>
+    public class LoginUserCommandRequest : IRequest<Response<LoginUserCommandResponse>>
     {
         public string Username { get; set; }
 

@@ -3,5 +3,9 @@
     public interface IClientCredentialTokenService
     {
         string GetToken();
+
+        string GetUserName();
+
+        string GetRefreshToken();
     }
 }

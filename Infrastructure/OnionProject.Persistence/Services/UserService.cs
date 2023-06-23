@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace OnionProject.Persistence.Services
 {
-    public class UserService : IAspNetUserService
+    public class UserService : IUserService
     {
         private IUnitOfWorkRepo _unitOfWorkRepo;
 
@@ -19,9 +19,9 @@ namespace OnionProject.Persistence.Services
             _unitOfWorkRepo = unitOfWorkRepo;
         }
 
-        public async Task<User> GetAsync(string UserName)
+        public async Task<User> GetAsync(string UserName, string password)
         {
-            var user = await _unitOfWorkRepo.UserReadRepository.GetAsync(s => s.UserName == UserName);
+            var user = await _unitOfWorkRepo.UserReadRepository.GetAsync(s => s.UserName == UserName && s.Password == password);
             return user;
         }
     }

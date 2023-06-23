@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json.Linq;
 using OnionProject.Application.Dtos.Response;
-using OnionProject.Application.Features.Queries.LoginUser;
+using OnionProject.Application.Features.Commands.LoginUser;
+using OnionProject.Application.Features.Commands.RefreshLoginUser;
 using OnionProject.WebMvc.Services.Abstractions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -21,18 +22,18 @@ namespace OnionProject.WebMvc.Services.Concrete
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<bool> Authenticate(string username, string password)
+        public async Task<bool> LoginAsync(string username, string password)
         {
-            var authenticateResult = await _client.PostAsJsonAsync("Auth", new LoginUserQueryRequest
+            var authenticateResult = await _client.PostAsJsonAsync("Auth", new LoginUserCommandRequest
             {
                 Username = username,
                 Password = password
             });
             if (authenticateResult.IsSuccessStatusCode)
             {
-                var response = await authenticateResult.Content.ReadFromJsonAsync<Response<LoginUserQueryResponse>>();
-                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(response.Data.Token);
-                var claims = new List<Claim> { new Claim("UserAuthToken", response.Data.Token) };
+                var response = await authenticateResult.Content.ReadFromJsonAsync<Response<LoginUserCommandResponse>>();
+                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(response.Data.TokenDto.Token);
+                var claims = new List<Claim> { new Claim("UserAuthToken", response.Data.TokenDto.Token), new Claim("UserAuthRefreshToken", response.Data.TokenDto.RefreshToken) };
                 claims.AddRange(jwt.Claims);
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme, "unique_name", "role");
                 var authProperties = new AuthenticationProperties
@@ -53,6 +54,36 @@ namespace OnionProject.WebMvc.Services.Concrete
         public void Logout()
         {
             _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+
+        public async Task<bool> RefreshLoginAsync(string username, string refreshToken)
+        {
+            var authenticateResult = await _client.PostAsJsonAsync("Refresh", new RefreshLoginUserCommandRequest
+            {
+                UserName = username,
+                RefreshToken = refreshToken
+            });
+            if (authenticateResult.IsSuccessStatusCode)
+            {
+                var response = await authenticateResult.Content.ReadFromJsonAsync<Response<RefreshLoginUserCommandResponse>>();
+                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(response.Data.TokenDto.Token);
+                var claims = new List<Claim> { new Claim("UserAuthToken", response.Data.TokenDto.Token), new Claim("UserAuthRefreshToken", response.Data.TokenDto.RefreshToken) };
+                claims.AddRange(jwt.Claims);
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme, "unique_name", "role");
+                var authProperties = new AuthenticationProperties
+                {
+                    AllowRefresh = true,
+                    ExpiresUtc = DateTime.Now.AddDays(5),
+                    IsPersistent = true
+                };
+
+                await _httpContextAccessor.HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
+                return true;
+            }
+            return false;
         }
     }
 

@@ -9,6 +9,11 @@ namespace OnionProject.WebMvc.Extensions
         {
             return GetClaimValue(identity, "UserAuthToken");
         }
+
+        public static string GetUserAuthRefreshToken(this IIdentity identity)
+        {
+            return GetClaimValue(identity, "UserAuthRefreshToken");
+        }
         private static string GetClaimValue(IIdentity identity, string claimName)
         {
             try

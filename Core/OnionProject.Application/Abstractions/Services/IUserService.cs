@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace OnionProject.Application.Abstractions.Services
 {
-    public interface IAspNetUserService
+    public interface IUserService
     {
-        Task<User> GetAsync(string UserName);
+        Task<User> GetAsync(string UserName, string password);
     }
 }

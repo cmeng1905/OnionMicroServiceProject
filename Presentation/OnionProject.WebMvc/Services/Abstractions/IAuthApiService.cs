@@ -2,7 +2,8 @@
 {
     public interface IAuthApiService
     {
-        public Task<bool> Authenticate(string username, string password);
+         Task<bool> LoginAsync(string username, string password);
+         Task<bool> RefreshLoginAsync(string username, string refreshToken);
         void Logout();
     }
 }

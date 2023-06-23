@@ -21,7 +21,7 @@ namespace OnionProject.ProductApi.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
+        [HttpGet("{action}")]
         public async Task<IActionResult> GetProducts()
         {
             var user = User.Identity.Name;

@@ -11,18 +11,18 @@ namespace OnionProject.Application.Features.Queries.GetUser
 {
     public class GetUserQueryHandler : IRequestHandler<GetUserQueryRequest, GetUserQueryResponse>
     {
-        private IAspNetUserService _aspNetUserService;
+        private IUserService _aspNetUserService;
 
-        public GetUserQueryHandler(IAspNetUserService aspNetUserService)
+        public GetUserQueryHandler(IUserService aspNetUserService)
         {
             _aspNetUserService = aspNetUserService;
         }
         public async Task<GetUserQueryResponse> Handle(GetUserQueryRequest request, CancellationToken cancellationToken)
         {
-            var user = await _aspNetUserService.GetAsync(request.Username);
+            var user = await _aspNetUserService.GetAsync(request.Username, request.Password);
             return new GetUserQueryResponse
             {
-                User=user
+                User = user
             };
         }
     }

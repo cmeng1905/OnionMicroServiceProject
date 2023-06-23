@@ -26,10 +26,11 @@ namespace OnionProject.Persistence
                 options.UseSqlServer(Configuration.MssqlConnectionString);
                 options.UseLazyLoadingProxies();
             });
-            services.AddScoped<IUserAuthService, UserAuthService>();
-            services.AddScoped<IAspNetUserService, UserService>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUnitOfWorkRepo, UnitOfWorkRepo>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IAuthService, AuthService>();
         }
     }
 }

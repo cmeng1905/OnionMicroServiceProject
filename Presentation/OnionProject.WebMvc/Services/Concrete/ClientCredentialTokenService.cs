@@ -17,5 +17,16 @@ namespace OnionProject.WebMvc.Services.Concrete
             var token =  _contextAccessor.HttpContext.User.Identity.GetUserAuthAccessToken();
             return token;
         }
+
+        public string GetUserName()
+        {
+            return _contextAccessor.HttpContext.User.Identity.Name;
+        }
+
+        public string GetRefreshToken()
+        {
+            var token = _contextAccessor.HttpContext.User.Identity.GetUserAuthRefreshToken();
+            return token;
+        }
     }
 }

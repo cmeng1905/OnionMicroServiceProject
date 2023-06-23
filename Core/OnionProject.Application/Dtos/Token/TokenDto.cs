@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnionProject.Application.Features.Queries.LoginUser
+namespace OnionProject.Application.Dtos.Token
 {
-    public class LoginUserQueryResponse
+    public class TokenDto
     {
         public string Username { get; set; }
 

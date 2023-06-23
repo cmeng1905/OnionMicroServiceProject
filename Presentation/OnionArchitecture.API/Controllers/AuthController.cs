@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnionProject.Application.Abstractions.Services;
 using OnionProject.Application.ControllerBases;
-using OnionProject.Application.Features.Queries.LoginUser;
+using OnionProject.Application.Features.Commands.LoginUser;
+using OnionProject.Application.Features.Commands.RefreshLoginUser;
 using OnionProject.Application.Repositories.User;
 
 namespace OnionArchitecture.API.Controllers
@@ -20,11 +21,19 @@ namespace OnionArchitecture.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost]
-        public async Task<IActionResult> Authenticate(LoginUserQueryRequest loginUserQueryRequest)
+        [HttpPost("Auth")]
+        public async Task<IActionResult> Authenticate(LoginUserCommandRequest loginUserQueryRequest)
         {
-            var user = await _mediator.Send(loginUserQueryRequest);
-            return CreateActionResultInstance(user);
+            var response = await _mediator.Send(loginUserQueryRequest);
+            return CreateActionResultInstance(response);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("Refresh")]
+        public async Task<IActionResult> RefreshAuthenticate(RefreshLoginUserCommandRequest refreshLoginUserCommandRequest)
+        {
+            var response = await _mediator.Send(refreshLoginUserCommandRequest);
+            return CreateActionResultInstance(response);
         }
     }
 }

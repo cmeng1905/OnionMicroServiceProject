@@ -2,10 +2,10 @@
 {
     public interface IClientCredentialTokenService
     {
-        string GetToken();
+        Task<string> GetToken();
 
         string GetUserName();
 
-        string GetRefreshToken();
+        Task<string> GetRefreshToken();
     }
 }

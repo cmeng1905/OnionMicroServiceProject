@@ -1,4 +1,5 @@
-﻿using OnionProject.WebMvc.Extensions;
+﻿using Microsoft.AspNetCore.Authentication;
+using OnionProject.WebMvc.Extensions;
 using OnionProject.WebMvc.Services.Abstractions;
 
 namespace OnionProject.WebMvc.Services.Concrete
@@ -12,9 +13,10 @@ namespace OnionProject.WebMvc.Services.Concrete
             _contextAccessor = contextAccessor;
         }
 
-        public string GetToken()
+        public async Task<string> GetToken()
         {
-            var token =  _contextAccessor.HttpContext.User.Identity.GetUserAuthAccessToken();
+            //var token =  _contextAccessor.HttpContext.User.Identity.GetUserAuthAccessToken();
+            var token =await _contextAccessor.HttpContext.GetTokenAsync("access_token");
             return token;
         }
 
@@ -23,9 +25,10 @@ namespace OnionProject.WebMvc.Services.Concrete
             return _contextAccessor.HttpContext.User.Identity.Name;
         }
 
-        public string GetRefreshToken()
+        public async Task<string> GetRefreshToken()
         {
-            var token = _contextAccessor.HttpContext.User.Identity.GetUserAuthRefreshToken();
+            //var token = _contextAccessor.HttpContext.User.Identity.GetUserAuthRefreshToken();
+            var token = await _contextAccessor.HttpContext.GetTokenAsync("refresh_token");
             return token;
         }
     }

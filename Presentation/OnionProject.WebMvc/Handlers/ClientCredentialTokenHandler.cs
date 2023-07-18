@@ -17,18 +17,18 @@ namespace OnionProject.WebMvc.Handlers
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _clientCredentialTokenService.GetToken());
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await _clientCredentialTokenService.GetToken());
 
             var response = await base.SendAsync(request, cancellationToken);
 
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                var refreshToken = _clientCredentialTokenService.GetRefreshToken();
+                var refreshToken = await _clientCredentialTokenService.GetRefreshToken();
                 var username = _clientCredentialTokenService.GetUserName();
                 var result = await _authApiService.RefreshLoginAsync(username, refreshToken);
                 if (result)
                 {
-                    var token = _clientCredentialTokenService.GetToken();
+                    var token = await _clientCredentialTokenService.GetToken();
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                     response = await base.SendAsync(request, cancellationToken);
                 }

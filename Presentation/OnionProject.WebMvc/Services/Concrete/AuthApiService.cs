@@ -5,6 +5,7 @@ using OnionProject.Application.Dtos.Response;
 using OnionProject.Application.Features.Commands.LoginUser;
 using OnionProject.Application.Features.Commands.RefreshLoginUser;
 using OnionProject.WebMvc.Services.Abstractions;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -33,15 +34,22 @@ namespace OnionProject.WebMvc.Services.Concrete
             {
                 var response = await authenticateResult.Content.ReadFromJsonAsync<Response<LoginUserCommandResponse>>();
                 var jwt = new JwtSecurityTokenHandler().ReadJwtToken(response.Data.TokenDto.Token);
-                var claims = new List<Claim> { new Claim("UserAuthToken", response.Data.TokenDto.Token), new Claim("UserAuthRefreshToken", response.Data.TokenDto.RefreshToken) };
-                claims.AddRange(jwt.Claims);
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme, "unique_name", "role");
+                var claimsIdentity = new ClaimsIdentity(jwt.Claims, CookieAuthenticationDefaults.AuthenticationScheme, "unique_name", "role");
                 var authProperties = new AuthenticationProperties
                 {
                     AllowRefresh = true,
                     ExpiresUtc = DateTime.Now.AddDays(5),
                     IsPersistent = true
                 };
+
+                authProperties.StoreTokens(new List<AuthenticationToken>()
+            {
+                new AuthenticationToken{ Name="access_token",Value=response.Data.TokenDto.Token},
+                   new AuthenticationToken{ Name="refresh_token",Value=response.Data.TokenDto.RefreshToken},
+                      new AuthenticationToken{ Name="expires_in",Value= response.Data.TokenDto.RefreshTokenExpireDate.ToString("o",CultureInfo.InvariantCulture)}
+            });
+
+
                 await _httpContextAccessor.HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity),
@@ -67,16 +75,24 @@ namespace OnionProject.WebMvc.Services.Concrete
             {
                 var response = await authenticateResult.Content.ReadFromJsonAsync<Response<RefreshLoginUserCommandResponse>>();
                 var jwt = new JwtSecurityTokenHandler().ReadJwtToken(response.Data.TokenDto.Token);
-                var claims = new List<Claim> { new Claim("UserAuthToken", response.Data.TokenDto.Token), new Claim("UserAuthRefreshToken", response.Data.TokenDto.RefreshToken) };
-                claims.AddRange(jwt.Claims);
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme, "unique_name", "role");
-                var authProperties = new AuthenticationProperties
-                {
-                    AllowRefresh = true,
-                    ExpiresUtc = DateTime.Now.AddDays(5),
-                    IsPersistent = true
-                };
+                var claimsIdentity = new ClaimsIdentity(jwt.Claims, CookieAuthenticationDefaults.AuthenticationScheme, "unique_name", "role");
+                //var authProperties = new AuthenticationProperties
+                //{
+                //    AllowRefresh = true,
+                //    ExpiresUtc = DateTime.Now.AddDays(5),
+                //    IsPersistent = true
+                //};
 
+                var authenticationResult = await _httpContextAccessor.HttpContext.AuthenticateAsync();
+
+                var authProperties = authenticationResult.Properties;
+                authProperties.StoreTokens(new List<AuthenticationToken>()
+            {
+                new AuthenticationToken{ Name="access_token",Value=response.Data.TokenDto.Token},
+                   new AuthenticationToken{ Name="refresh_token",Value=response.Data.TokenDto.RefreshToken},
+
+                      new AuthenticationToken{ Name="expires_in",Value= response.Data.TokenDto.RefreshTokenExpireDate.ToString("o",CultureInfo.InvariantCulture)}
+            });
                 await _httpContextAccessor.HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity),

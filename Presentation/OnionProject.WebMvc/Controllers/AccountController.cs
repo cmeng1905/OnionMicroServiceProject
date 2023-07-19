@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OnionProject.WebMvc.Models.Account;
 using OnionProject.WebMvc.Services.Abstractions;
 
